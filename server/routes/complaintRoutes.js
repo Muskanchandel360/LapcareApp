@@ -1,26 +1,23 @@
-const express = require("express")
-const { getComplaints, raiseComplaint, updateComplaint } = require("../controllers/complaintController")
-const protect = require("../middlewares/authMiddleware")
+const express = require("express");
+const protect = require("../middlewares/authMiddleware");
+const {
+  getComplaints,
+  getComplaint,
+  raiseComplaint,
+  updateComplaint,
+} = require("../controllers/complaintController");
 
-const router = express.Router()
+const router = express.Router();
 
+// Get Complaints
+router.get("/", protect, getComplaints);
+// Get Complaint
+router.get("/:id", protect, getComplaint);
+// Raise Complaint
+router.post("/", protect, raiseComplaint);
+// Update Complaint
+router.put("/:id", protect, updateComplaint);
 
-
-
-//GET COMPLAINTS
-router.get("/" , protect , getComplaints)
-
-//GET COMPLAINT
-router.get("/:id" , protect, getComplaints)
-
-//RAISE COMPLAINTS
-router.post("/" , protect , raiseComplaint)
-
-//UPDATECOMPLAINTS
-router.put("/:id" , protect ,updateComplaint)
-
-//COMMENT ROUTE
 router.use("/:id/comment", require("./commentRoutes"));
 
-
-module.exports= router
+module.exports = router;

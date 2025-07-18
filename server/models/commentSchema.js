@@ -1,17 +1,18 @@
 const { mongoose } = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const commentSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
-    email: {
-      type: String,
-      unique: true,
+    complaint: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Complaint",
       required: true,
     },
-    password: {
+    message: {
       type: String,
       required: true,
     },
@@ -26,4 +27,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Comment", commentSchema);

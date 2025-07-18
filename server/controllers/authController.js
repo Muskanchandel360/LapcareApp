@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -19,13 +19,13 @@ const register = asyncHandler(async (req, res) => {
     throw new Error("User Aready Exist");
   }
 
-  //HASH PASSWORD 
-  const salt = bcrypt.genSaltSync(10)
-  const hashedPassword = bcrypt.hashSync(password , salt)
+  // Hash Password
 
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
 
   // Create user
-  const user = await User.create({ name, email, password:hashedPassword });
+  const user = await User.create({ name, email, password: hashedPassword });
 
   if (!user) {
     res.status(400);
@@ -33,60 +33,48 @@ const register = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    id:user._id ,
-    name:user.name, 
-    email:user.email,
-    token:generateToken(user._id)
-
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    token: generateToken(user._id),
   });
 });
 
-
-
-//LOGIN USER 
 const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Please Fill All Details!!");
+  }
 
-    if ( !email || !password) {
-      res.status(400);
-      throw new Error("Please Fill All Details!!");
-    }
-  
+  // Find If User Exist In DB
+  const user = await User.findOne({ email });
 
-    //FIND USER IN DATABASE
-      
-    const user = await User.findOne({email})
-    if(user && bcrypt.compareSync(password , user.password)){
-        res.status(200).json({
-          id:user._id ,
-          name:user.name, 
-          email:user.email,
-          token:generateToken(user._id),
-          isAdmin:user.isAdmin,
-        })
-    }else {
-        res.status(400)
-        throw new Error ("INVALID CREDENTIALS")
-    }
+  if (user && bcrypt.compareSync(password, user.password)) {
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid Credentials");
+  }
 });
 
-
-const privateController = (req , res) => {
+const privateController = (req, res) => {
   res.json({
-    id:req.user._id,
-    name:req.user.name,
-    email:req.user.email
+    id: req.user._id,
+    user: req.user.name,
+    email: req.user.email,
+  });
+};
 
-  })
-}
-
-
-//TOKEN GENERATE
 const generateToken = (id) => {
-  return jwt.sign({id} , process.env.JWT_SECRET , {expiresIn : "30d"})
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
 
-}
-
-
-module.exports = { register, login , privateController};
+module.exports = { register, login, privateController };

@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Complaint = require("../models/complaintModel");
 const User = require("../models/userModel");
-//GET COMPLAINTS
+
 const getComplaints = asyncHandler(async (req, res) => {
   // Find if user exist
   const user = await User.findById(req.user._id);
@@ -21,10 +21,6 @@ const getComplaints = asyncHandler(async (req, res) => {
   res.status(200).json(complaints);
 });
 
-
-
-//GET COMPLAINT
-
 const getComplaint = asyncHandler(async (req, res) => {
   // Find if user exist
   const user = await User.findById(req.user._id);
@@ -43,10 +39,6 @@ const getComplaint = asyncHandler(async (req, res) => {
 
   res.status(200).json(complaint);
 });
-
-
-//RAISE COMPLAINT
-
 
 const raiseComplaint = asyncHandler(async (req, res) => {
   const { laptop, description, image } = req.body;
@@ -78,9 +70,6 @@ const raiseComplaint = asyncHandler(async (req, res) => {
 
   res.status(201).json(complaint);
 });
-
-
-//UPDATE COMPLAINT
 
 const updateComplaint = asyncHandler(async (req, res) => {
   // Find if user exist

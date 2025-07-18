@@ -1,10 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Complaint = require("../models/complaintModel");
-const Comment = require("../models/commentModel");
+const Comment = require("../models/commentSchema");
 
-
-//GET COMMENTS
 const getComments = asyncHandler(async (req, res) => {
   // Find if user exist
   const user = await User.findById(req.user.id);
@@ -31,10 +29,6 @@ const getComments = asyncHandler(async (req, res) => {
   res.status(200).json(comments);
 });
 
-
-
-
-//ADD COMMENT
 const addComment = asyncHandler(async (req, res) => {
   const { text } = req.body;
 
