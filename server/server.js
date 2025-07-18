@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+
 const colors = require("colors");
 const connectDB = require("./config/db_config");
 const errorHandler = require("./middlewares/errorHandler");
@@ -15,12 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 5000;
 
-//DEFAULT ROUTE
-app.get("/", (req, res) => {
-  res.json({
-    msg: "LAPCARE API RUNNING...",
-  });
-});
+// //DEFAULT ROUTE
+// app.get("/", (req, res) => {
+//   res.json({
+//     msg: "LAPCARE API RUNNING...",
+//   });
+// });
+
 
 
 // User Route
@@ -32,6 +35,23 @@ app.use("/api/complaint" , require("./routes/complaintRoutes"))
 
   //ADMIN ROUTE
   app.use("/api/admin" , require("./routes/adminRoutes"))
+
+
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, "/client/dist")));
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"))
+  );
+} else {
+  const __dirname = path.resolve();
+  app.get("/", (req, res) => {
+    res.send("Lapcare API is running....");
+  });
+}
+
+
+
 
 //ERROR HANDLER
 app.use(errorHandler)
